@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "id": 100,
+      "first_name": "Eliot",
+      "last_name": "Doe is duplicate"
+    },
+    {
+      "id": 103,
+      "first_name": "Jack",
+      "last_name": "Doe"
+    },
+    {
+      "id": 104,
+      "first_name": "Vincent",
+      "last_name": "Doe"
+    }
+  ]
+}

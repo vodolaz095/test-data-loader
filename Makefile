@@ -1,3 +1,11 @@
+lint:
+	# format code
+	gofmt -w=true -s=true -l=true main.go
+	# run basic code quality and sanity check
+	golint ./...
+	go vet ./...
+
+
 # expected behaviour
 start:
 	go run main.go --source-dir=./input/ --ignore-duplicates --out-file=output.json

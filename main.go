@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"sync"
 )
 
 // DataElement is minimal element of data
@@ -23,6 +24,9 @@ type DataElement struct {
 type OutputDataStructure struct {
 	Data []DataElement `json:"data"`
 }
+
+// Concurrency depicts number of concurrent processes being executed
+const Concurrency = 12
 
 // Output is used for output
 var Output map[int]DataElement
@@ -98,17 +102,29 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s : while reading input directory %s", err, inputDirectory)
 	}
+	wg := sync.WaitGroup{}
+	wg.Add(Concurrency)
 	if len(channelForFilesToParse) > 0 {
-		for pathToFileToParse := range channelForFilesToParse {
-			err = Parse(pathToFileToParse)
-			if err != nil {
-				log.Fatalf("%s : while parsing %s", err, pathToFileToParse)
-			}
-			if len(channelForFilesToParse) == 0 {
-				break
-			}
+		for i := 0; i < Concurrency; i += 1 {
+			go func() {
+				if len(channelForFilesToParse) == 0 {
+					wg.Done()
+					return
+				}
+				for pathToFileToParse := range channelForFilesToParse {
+					err = Parse(pathToFileToParse)
+					if err != nil {
+						log.Fatalf("%s : while parsing %s", err, pathToFileToParse)
+					}
+					if len(channelForFilesToParse) == 0 {
+						break
+					}
+				}
+				wg.Done()
+			}()
 		}
 	}
+	wg.Wait()
 	Output = make(map[int]DataElement, 0)
 	if len(channelForDataElementsToSave) > 0 {
 		for de := range channelForDataElementsToSave {

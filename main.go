@@ -98,7 +98,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s : while reading input directory %s", err, inputDirectory)
 	}
-	if len(channelForDataElementsToSave) > 0 {
+	if len(channelForFilesToParse) > 0 {
 		for pathToFileToParse := range channelForFilesToParse {
 			err = Parse(pathToFileToParse)
 			if err != nil {

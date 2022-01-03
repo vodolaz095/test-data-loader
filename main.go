@@ -19,6 +19,7 @@ type DataElement struct {
 	LastName  string `json:"last_name"`
 }
 
+// OutputDataStructure is data structure format output to/from json files
 type OutputDataStructure struct {
 	Data []DataElement `json:"data"`
 }
@@ -54,6 +55,7 @@ func ReadDirectory(pathToDirectory string) (err error) {
 	return
 }
 
+// Parse parses
 func Parse(pathToFile string) (err error) {
 	var elements OutputDataStructure
 	data, err := ioutil.ReadFile(pathToFile)
@@ -96,28 +98,32 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s : while reading input directory %s", err, inputDirectory)
 	}
-	for pathToFileToParse := range channelForFilesToParse {
-		err = Parse(pathToFileToParse)
-		if err != nil {
-			log.Fatalf("%s : while parsing %s", err, pathToFileToParse)
-		}
-		if len(channelForFilesToParse) == 0 {
-			break
+	if len(channelForDataElementsToSave) > 0 {
+		for pathToFileToParse := range channelForFilesToParse {
+			err = Parse(pathToFileToParse)
+			if err != nil {
+				log.Fatalf("%s : while parsing %s", err, pathToFileToParse)
+			}
+			if len(channelForFilesToParse) == 0 {
+				break
+			}
 		}
 	}
 	Output = make(map[int]DataElement, 0)
-	for de := range channelForDataElementsToSave {
-		_, found := Output[de.ID]
-		if found {
-			if ignoreDuplicates {
-				continue
+	if len(channelForDataElementsToSave) > 0 {
+		for de := range channelForDataElementsToSave {
+			_, found := Output[de.ID]
+			if found {
+				if ignoreDuplicates {
+					continue
+				}
+				fmt.Println("Duplicate data found")
+				os.Exit(20)
 			}
-			fmt.Println("Duplicate data found")
-			os.Exit(20)
-		}
-		Output[de.ID] = de
-		if 0 == len(channelForDataElementsToSave) {
-			break
+			Output[de.ID] = de
+			if 0 == len(channelForDataElementsToSave) {
+				break
+			}
 		}
 	}
 	outputSlice := make([]DataElement, 0)

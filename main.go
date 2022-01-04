@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"log"
 	"os"
@@ -40,7 +39,7 @@ var ignoreDuplicates bool
 
 // ReadDirectory reads directory
 func ReadDirectory(pathToDirectory string) (err error) {
-	err = filepath.Walk(pathToDirectory, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(pathToDirectory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			if os.IsNotExist(err) {
 				fmt.Println("Source directory not found")

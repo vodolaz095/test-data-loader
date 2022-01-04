@@ -23,3 +23,8 @@ not_found:
 pack:
 	git archive --format=zip -o ~/test-data-loader.zip HEAD
 
+podman:
+	podman build .
+
+docker:
+	podman docker .

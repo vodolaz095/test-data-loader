@@ -127,6 +127,9 @@ func main() {
 	Output = make(map[int]DataElement, 0)
 	if len(channelForDataElementsToSave) > 0 {
 		for de := range channelForDataElementsToSave {
+			if 0 == len(channelForDataElementsToSave) {
+				break
+			}
 			_, found := Output[de.ID]
 			if found {
 				if ignoreDuplicates {
@@ -136,9 +139,6 @@ func main() {
 				os.Exit(20)
 			}
 			Output[de.ID] = de
-			if 0 == len(channelForDataElementsToSave) {
-				break
-			}
 		}
 	}
 	outputSlice := make([]DataElement, 0)
